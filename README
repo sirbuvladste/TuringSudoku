@@ -1,0 +1,49 @@
+O Masina Turing care sa verifice daca un careu de sudoku 4x4 primit ca input este valid sau nu.
+Masina va semnala ca un careu e valid, tranzitionând în starea finala Y, altfel se va afla in starea finala N.
+
+Pentru usurinta:
+=> x (x mic) reprezinta orice numar de la 1 la 4.
+=> secventa totala = tot inputul => *12:43*34:12*21:34*43:21*
+=> secventa mare = jumatate de secventa => *12:43*34:12* si pe *21:34*43:21*
+=> secventa = intre doua * => *13:42*
+
+Pentru verificarea liniilor:
+- am ales sa parcurg secvente aflate intre doua *
+- verific daca am fiecare cifra (1, 2, 3, 4) pe rand, cand gasesc numarul
+  revin la inceputul secventei si caut urmatorul numar
+- daca nu gasesc una din cifre si ajung la *, termin cu starea N
+- daca am gasit toate cifrele dintr-o secventa trec la urmatoarea
+- daca cand fac tranzitia spre o noua zona dau de blank, inseamna
+  ca toate liniile sunt corecte si trec la cautarea regiunilor
+=> lx = starea de parcurgere si cautarea numarului x
+=> rlx = revenirea la prima pozitie a secventei si trecerea la cautarea urmatoare
+=> rl_next = trecerea la urmatoarea secventa
+
+Pentru verificarea zonelor (regiuni):
+- am facut un algorit care se repeta pe prima si a doua jumatate de input (secvente mari)
+- cursorul o sa se afle la sfarsitul secventei totale, asa ca o sa se parcuga
+  de la dreapta la stanga cautarea
+  ex: Pentru *12:43*34:12*21:34*43:21* => algoritmul se aplica mai intai pe
+  *21:34*43:21* si dupa pe *12:43*34:12*, impartita in zonele *1:2*1:2*3:4*3:4*
+- in fiecare secventa mare se afla 2 zone, prima intre *xx: si a doua intre :xx*
+  ex: *21:34*43:21* => avem zona 2134 si 3421
+- asemanator ca la linii, caut pe rand fiecare cifra din zona respectiva
+- daca numarul cautat nu se afla in prima secventa o sa sar in urmatoarea sa verific
+- dupa ce am verificat toate zonele si sunt corecte, cursorul se va afla la inceputul
+  secventei mari si se trece la algoritmul de verificare a coloanelor
+  ex complet: *21:34*43:21* => pentru zona 4, cand caut cifra 3, se parcuge astfel: se verifica 1,
+  dupa 2, dupa la : trece intr-o stare care sa sara la cealalta jumatate zonei (:34*) si
+  continua cautarea, verificandu-l pe 4 si dupa pe 3. La gaseirea numarului 3, se intoarce
+  la inceput, la cifra 1.
+=> sz = starea de inceput pentru verificarea zonelor
+=> z*zx = cautarea numarului x int prima jumatate pentru zonele de tip :xx* 
+
+
+Pentru verificarea coloanelor:
+- am ales sa copiez la sfarsitul secventei totale toate cifrele de pe pozitiile corspunzatoare
+  fiecarei coloane, pe rand
+- dupa ce am copiat cifrele de pe pozitiile corespunzatoare unei coloane aplic algoritmul de
+verificare a liniilor modificat astfel sa verifice intre doua _
+- daca un rand este gresit resetez sirul si intru in starea N
+- altfel resetez sirul si intru in starea Y
+ex: *12:43*34:12*21:34*43:21* => *12:43*34:12*21:34*43:21* 1324 
